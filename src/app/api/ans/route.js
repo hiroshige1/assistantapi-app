@@ -2,7 +2,6 @@ import OpenAI from "openai";
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-
 export async function POST(req) {
   const { message,threadId } = await req.json();
   let certhreadId;
