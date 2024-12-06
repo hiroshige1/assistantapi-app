@@ -4,21 +4,36 @@ const openai = new OpenAI({
 });
 
 export async function POST(req) {
-  const { message } = await req.json();
-  
-  const thread = await openai.beta.threads.create({
-    messages: [
-      {
-        role: "user",
-        content: message,
-      },
-    ],
-  });
-  const run = await openai.beta.threads.runs.createAndPoll(thread.id, {
+  const { message,threadId } = await req.json();
+  let certhreadId;
+  let thread;
+    if (false) {
+      await openai.chat.completions.create({
+        thread_id: threadId, 
+        messages: [
+          {
+            role: 'user',
+            content: message, 
+          },
+        ],
+      });
+      certhreadId = threadId; 
+    } else {
+      thread = await openai.beta.threads.create({
+        messages: [
+          {
+            role: "user",
+            content: message,
+          },
+        ],
+      });
+      certhreadId=thread.id;
+    }
+  const run = await openai.beta.threads.runs.createAndPoll(certhreadId, {
     assistant_id: "asst_zos5ppLuJxeTrRrrE0cCQtpn",
   });
    
-  const messages = await openai.beta.threads.messages.list(thread.id, {
+  const messages = await openai.beta.threads.messages.list(certhreadId, {
     run_id: run.id,
   });
    
@@ -42,7 +57,7 @@ export async function POST(req) {
     textValue = text.value; // text.value を textValue に格納
   }
   
-  return new Response(JSON.stringify({ message: textValue }), {
+  return new Response(JSON.stringify({ message: textValue, threadId: certhreadId}), {
     status: 200,
     headers: {
       "Content-Type": "application/json",
