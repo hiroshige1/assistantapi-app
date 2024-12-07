@@ -6,7 +6,8 @@ export async function POST(req) {
   const { message,threadId } = await req.json();
   let certhreadId;
   let thread;
-    if (false) {
+  const x=1;
+    if (x-1) {
       await openai.chat.completions.create({
         thread_id: threadId, 
         messages: [
